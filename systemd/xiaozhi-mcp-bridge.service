@@ -7,19 +7,19 @@ Requires=docker.service
 [Service]
 Type=simple
 
-# Change this path to your real installation directory.
-WorkingDirectory=/opt/xiaozhi-n8n-ai-assistant/bridge
+# Upstream xiaozhi-mcp-proxy installation
+WorkingDirectory=/mnt/docker/xiaozhi-mcp-bridge
 
-# Keep secrets in this local file. Do NOT commit it.
-EnvironmentFile=-/etc/xiaozhi-mcp-bridge.env
+# Private environment variables are stored outside Git.
+# Never upload this file to GitHub.
+EnvironmentFile=/etc/xiaozhi-mcp-bridge.env
 
-ExecStart=/opt/xiaozhi-n8n-ai-assistant/bridge/venv/bin/python \
-  /opt/xiaozhi-n8n-ai-assistant/bridge/mcp_stdio_client.py
+ExecStart=/mnt/docker/xiaozhi-mcp-bridge/venv/bin/python /mnt/docker/xiaozhi-mcp-bridge/mcp_pipe.py /mnt/docker/xiaozhi-mcp-bridge/mcp_stdio_client.py
 
 Restart=always
 RestartSec=3
 
-# Basic hardening
+# Basic service hardening
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
