@@ -1,0 +1,29 @@
+[Unit]
+Description=Xiaozhi to n8n MCP Bridge
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+
+# Change this path to your real installation directory.
+WorkingDirectory=/opt/xiaozhi-n8n-ai-assistant/bridge
+
+# Keep secrets in this local file. Do NOT commit it.
+EnvironmentFile=-/etc/xiaozhi-mcp-bridge.env
+
+ExecStart=/opt/xiaozhi-n8n-ai-assistant/bridge/venv/bin/python \
+  /opt/xiaozhi-n8n-ai-assistant/bridge/mcp_stdio_client.py
+
+Restart=always
+RestartSec=3
+
+# Basic hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

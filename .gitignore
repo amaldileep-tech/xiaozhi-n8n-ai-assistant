@@ -1,0 +1,50 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+credentials/
+secrets/
+secret/
+auth/
+
+# n8n runtime/private data
+.n8n/
+n8n_data/
+data/n8n/
+database.sqlite
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+pip-wheel-metadata/
+
+# Node
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Backups
+*.bak
+*.backup
+*.old
+
+# Generated/test data
+tmp/
+temp/
