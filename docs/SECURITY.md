@@ -1,6 +1,6 @@
 # Security Checklist
 
-Before making the repository public, verify all of the following.
+Before publishing any changes to this repository, verify all of the following.
 
 ## Never commit
 
