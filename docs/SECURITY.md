@@ -1,72 +1,41 @@
-# Security Checklist
+# Security
 
-Before publishing any changes to this repository, verify all of the following.
+This repository is public and contains only sanitized configuration and workflow examples.
 
-## Never commit
+## Never Commit
 
-- `.env`
-- OpenAI/API keys
-- Telegram bot token
+- `.env` files
+- API keys or tokens
 - passwords
-- database credentials
-- n8n credential database
-- n8n encryption key
-- SSH private keys
-- TLS private keys
-- Tailscale auth keys
-- OAuth tokens
+- Telegram bot tokens
+- n8n credentials or encryption keys
+- SSH/TLS private keys
+- Tailscale authentication keys
 - production webhook secrets
-- private certificates
-- browser cookies/session tokens
 
-## Review n8n exports
+## n8n Workflow Exports
 
-An exported workflow can reveal more than expected.
+Before publishing an n8n workflow, review it for:
 
-Inspect it for:
-
-- hostnames
-- domains
-- webhook URLs
+- credentials
+- webhook IDs/secrets
 - internal IP addresses
-- usernames
-- email addresses
-- node parameters
-- static headers
-- authorization strings
-- credential references
-- file system paths
+- private URLs
+- tokens or authorization headers
+- personal data
 
-## If a secret was ever committed
+## Secret Exposure
 
-Deleting the line from the latest file is not enough because Git keeps history.
+If a secret is accidentally committed:
 
-Immediately:
+1. Revoke or rotate it immediately.
+2. Remove it from Git history.
+3. Push the cleaned history.
+4. Verify the old secret no longer works.
 
-1. revoke/rotate the exposed secret;
-2. remove it from Git history;
-3. push the cleaned history;
-4. verify it is no longer accessible.
+## Before Publishing
 
-Treat a committed secret as compromised.
-
-## Public screenshots
-
-Before uploading screenshots, check for:
-
-- IP addresses
-- domains
-- QR codes
-- API keys
-- tokens
-- email addresses
-- usernames
-- device serial numbers
-- Wi-Fi SSIDs
-- browser tabs containing private services
-
-## Run local check
+Run:
 
 ```bash
 python3 scripts/prepublish_check.py .
-```
