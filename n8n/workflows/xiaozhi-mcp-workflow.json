@@ -1,0 +1,67 @@
+{
+  "name": "Mcp work flow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "c4afff19-437e-4201-8fa0-2f13f090ff1f"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6c29bcc6-fdda-4306-95a0-87abf806a4be",
+      "name": "MCP Server Trigger"
+    },
+    {
+      "parameters": {
+        "description": "Check the Raspberry Pi server, NAS, and Docker status, including CPU temperature, memory, storage, running Docker containers, Immich health, and uptime.\n\nUse this tool when the user asks:\n\u201cCheck my server status\u201d\n\u201cCheck my NAS status\u201d\n\u201cCheck Docker status\u201d\n\u201cHow many Docker containers are running?\u201d\n\u201cIs my server healthy?\u201d",
+        "workflowId": {
+          "__rl": true,
+          "value": "HArmox6rcel7gxop",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/HArmox6rcel7gxop",
+          "cachedResultName": "NAS STATUS TOOL"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "719400c4-d6f4-4028-ae4f-956c309eaef2",
+      "name": "Call 'NAS STATUS TOOL'"
+    }
+  ],
+  "connections": {
+    "Call 'NAS STATUS TOOL'": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "nodeGroups": [],
+  "tags": []
+}
