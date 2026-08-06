@@ -1,35 +1,36 @@
-# Python Bridge
+# Xiaozhi MCP Bridge
 
-This folder contains a small public reference bridge.
+This project uses the open-source `xiaozhi-mcp-proxy` as the communication bridge between Xiaozhi and the automation environment.
 
-Your working deployment may contain additional Xiaozhi/MCP-specific behavior. Do not replace a working production bridge with this example unless you understand the differences.
+## Upstream Project
 
-## `mcp_pipe.py`
+Original project:
+https://github.com/maojindao55/xiaozhi-mcp-proxy
 
-Reads one JSON object per line from standard input and POSTs it to `N8N_WEBHOOK_URL`.
+The upstream README states that the project uses the MIT License.
 
-Test:
+## Version Used
 
-```bash
-export N8N_WEBHOOK_URL="http://127.0.0.1:5678/webhook-test/xiaozhi"
-echo '{"message":"hello"}' | python3 mcp_pipe.py
-```
+`081900cc1cc5e2b026c49dbb7f85bff9e238fdc9`
 
-## `mcp_stdio_client.py`
+## My Integration Work
 
-A generic stdio process launcher. It starts the command defined by `MCP_COMMAND` and forwards stdin/stdout.
+This repository focuses on my deployment and integration work, including:
 
-It is provided mainly to demonstrate the process pattern used by a bridge service.
+- Linux deployment
+- systemd service management
+- n8n workflow automation
+- Docker services
+- Xiaozhi ESP32-S3 integration
+- AI service integration
+- Telegram integration
+- home-lab automation
+- troubleshooting and monitoring
 
-## Environment
+## Deployment
 
-Use `.env` outside Git or define variables through systemd.
+The upstream bridge runs separately on the Linux server.
 
-Never hard-code:
+It is managed using:
 
-- Telegram bot tokens
-- API keys
-- passwords
-- Tailscale auth keys
-- OAuth tokens
-- webhook secrets
+`xiaozhi-mcp-bridge.service`
