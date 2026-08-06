@@ -1,198 +1,184 @@
 # Xiaozhi + n8n AI Assistant
 
-A self-hosted AI automation project connecting a Xiaozhi ESP32-S3 voice device to an n8n automation server through a lightweight Python bridge.
+A self-hosted AI automation project integrating a **Xiaozhi ESP32-S3 voice assistant**, **n8n**, **Linux**, **Docker**, **MCP**, and external services inside a home-lab environment.
 
-The goal of this repository is to document a practical home-lab AI assistant architecture while keeping credentials, tokens, private URLs, and server data out of Git.
+This repository documents the architecture, deployment method, automation workflow, security approach, and troubleshooting involved in building the system.
 
-## Architecture
+## Project Overview
 
 ```text
+User Voice
+    |
+    v
 Xiaozhi ESP32-S3
-       |
-       | voice / MCP messages
-       v
-Python MCP Bridge
-(mcp_pipe.py / mcp_stdio_client.py)
-       |
-       | HTTP / webhook / automation request
-       v
-      n8n
-       |
-       +-------------------+
-       |                   |
-       v                   v
-   AI services         Telegram
-       |
-       v
-Home-lab automations / APIs
+    |
+    v
+Xiaozhi MCP Proxy
+    |
+    v
+Linux / MCP Bridge
+    |
+    v
+n8n Automation
+    |
+    +-----------------------+
+    |           |           |
+    v           v           v
+AI Services   Telegram   Home-Lab APIs
+    |
+    v
+Response / Automation Action
 ```
 
-## What this project demonstrates
+## Technologies Used
 
-- Linux service administration
-- Python integration
-- systemd service management
+- Linux
+- Raspberry Pi / Home Lab
 - Docker / Docker Compose
-- n8n workflow automation
-- REST/webhook integrations
-- ESP32 / Xiaozhi integration
-- AI-agent orchestration
-- home-lab deployment and troubleshooting
-- secure handling of secrets
+- n8n
+- Python
+- MCP
+- systemd
+- ESP32-S3 / Xiaozhi
+- Telegram integration
+- REST APIs / Webhooks
+- Git / GitHub / GitHub Actions
 
-## Repository layout
+## What I Implemented
 
-```text
-xiaozhi-n8n-ai-assistant/
-├── .env.example
-├── .gitignore
-├── docker-compose.yml
-├── LICENSE
-├── README.md
-├── bridge/
-│   ├── mcp_pipe.py
-│   ├── mcp_stdio_client.py
-│   ├── requirements.txt
-│   └── README.md
-├── systemd/
-│   └── xiaozhi-mcp-bridge.service
-├── n8n/
-│   └── workflows/
-│       └── README.md
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── DEPLOYMENT.md
-│   ├── GITHUB_UPLOAD.md
-│   └── SECURITY.md
-├── scripts/
-│   └── prepublish_check.py
-├── screenshots/
-│   └── .gitkeep
-└── .github/
-    └── workflows/
-        └── prepublish-check.yml
-```
+- Deployed and maintained the integration on a Linux home-lab server
+- Ran n8n using Docker
+- Integrated Xiaozhi with n8n through an MCP bridge
+- Created n8n automation workflows
+- Managed the MCP bridge using systemd
+- Configured automatic startup and restart
+- Kept credentials outside source code using environment variables
+- Integrated external APIs and messaging services
+- Troubleshot connectivity, TLS, Docker, n8n, and Linux service issues
+- Built a Git-based documentation and deployment workflow
+- Added automated repository safety checks with GitHub Actions
 
-## Quick start
+## n8n Workflow
 
-### 1. Clone
-
-```bash
-git clone https://github.com/YOUR_USERNAME/xiaozhi-n8n-ai-assistant.git
-cd xiaozhi-n8n-ai-assistant
-```
-
-### 2. Create your local environment file
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-Never commit `.env`.
-
-### 3. Start n8n
-
-```bash
-docker compose up -d
-docker compose ps
-```
-
-By default this example binds n8n only to:
+A sanitized version of the real workflow is available at:
 
 ```text
-127.0.0.1:5678
+n8n/workflows/xiaozhi-mcp-workflow.json
 ```
 
-That is intentional. Expose it externally only through a secure reverse proxy, VPN, or another access method you control.
+Sensitive information was removed before publication.
 
-### 4. Test the sample Python bridge
+## Xiaozhi MCP Bridge
 
-The included bridge is a safe demonstration implementation. It reads JSON lines from standard input and forwards them to the configured n8n webhook.
+The communication bridge is based on the open-source **xiaozhi-mcp-proxy** project:
 
-```bash
-cd bridge
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+https://github.com/maojindao55/xiaozhi-mcp-proxy
 
-Example:
-
-```bash
-echo '{"message":"hello from Xiaozhi"}' | python mcp_pipe.py
-```
-
-### 5. Install the systemd unit
-
-Read `docs/DEPLOYMENT.md` first.
-
-```bash
-sudo cp systemd/xiaozhi-mcp-bridge.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable xiaozhi-mcp-bridge
-sudo systemctl start xiaozhi-mcp-bridge
-sudo systemctl status xiaozhi-mcp-bridge --no-pager -l
-```
-
-## Your real n8n workflows
-
-Do not blindly upload your live n8n database or Docker volume.
-
-Export only the workflows you want to publish and inspect the exported JSON first.
-
-Place sanitized exports here:
+Version used:
 
 ```text
-n8n/workflows/
+081900cc1cc5e2b026c49dbb7f85bff9e238fdc9
 ```
 
-See `n8n/workflows/README.md`.
+The upstream bridge source code is not presented as my own work. This repository focuses on deployment, integration, automation, Linux service management, and the surrounding infrastructure.
 
-## Before publishing
+See:
 
-Run:
+```text
+bridge/README.md
+```
+
+## Linux Service Management
+
+The MCP bridge runs as:
+
+```text
+xiaozhi-mcp-bridge.service
+```
+
+Example service file:
+
+```text
+systemd/xiaozhi-mcp-bridge.service
+```
+
+Useful commands:
+
+```bash
+sudo systemctl status xiaozhi-mcp-bridge
+sudo systemctl restart xiaozhi-mcp-bridge
+journalctl -u xiaozhi-mcp-bridge -f
+```
+
+## Security
+
+Secrets are intentionally kept outside Git. The repository does not include API keys, passwords, Telegram bot tokens, OAuth tokens, Tailscale auth keys, SSH private keys, n8n credential databases, production webhook secrets, or private environment files.
+
+Example values are stored only in:
+
+```text
+.env.example
+```
+
+Before publishing changes:
 
 ```bash
 python3 scripts/prepublish_check.py .
 ```
 
-Then inspect:
+GitHub Actions also performs an automated safety check.
 
-```bash
-git status
-git diff --cached
-```
-
-Only push after the secret check returns clean.
-
-## Suggested GitHub description
-
-> Self-hosted AI assistant integrating Xiaozhi ESP32-S3, Python MCP bridge, n8n, Telegram and home-lab automations using Docker and Linux.
-
-## Suggested GitHub topics
+## Repository Structure
 
 ```text
-xiaozhi
-esp32
-esp32-s3
-n8n
-mcp
-docker
-linux
-python
-automation
-ai-agent
-homelab
-systemd
-telegram-bot
-devops
+xiaozhi-n8n-ai-assistant/
+├── README.md
+├── LICENSE
+├── .gitignore
+├── .env.example
+├── docker-compose.yml
+├── bridge/
+│   └── README.md
+├── n8n/
+│   └── workflows/
+│       ├── README.md
+│       └── xiaozhi-mcp-workflow.json
+├── systemd/
+│   └── xiaozhi-mcp-bridge.service
+├── docs/
+├── scripts/
+│   └── prepublish_check.py
+└── .github/
+    └── workflows/
+        └── prepublish-check.yml
 ```
 
-## Important
+## Skills Demonstrated
 
-The bridge code included in this public template is a reference implementation. If your current production bridge contains additional logic, copy that code only after removing credentials and reviewing any upstream license requirements.
+- Linux administration
+- Git and GitHub workflow
+- Docker and Docker Compose
+- n8n automation
+- MCP integration
+- AI and API orchestration
+- Networking and remote access
+- systemd service management
+- Secret handling and repository sanitization
+- CI safety checks
+
+## Future Improvements
+
+- Additional n8n workflows
+- Better monitoring and health checks
+- Infrastructure-as-Code experiments
+- Local AI model integration
+- Expanded MCP tools
+- Centralized logging and monitoring
+
+## Disclaimer
+
+This is a personal home-lab and learning project. Third-party projects and services remain the property of their respective authors and maintainers.
 
 ## License
 
-MIT. See `LICENSE`.
+Repository-specific content is provided under the MIT License unless otherwise stated. Third-party components retain their original licenses.
